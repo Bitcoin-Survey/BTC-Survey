@@ -1,0 +1,288 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Survey & Earn 1 BTC</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .banner {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .banner h1 {
+            font-size: 2.5em;
+            color: #f0b90b;
+            text-shadow: 0 0 10px rgba(240, 185, 11, 0.8);
+            animation: glow 2s ease-in-out infinite;
+        }
+        .banner p {
+            font-size: 1.2em;
+            color: #ccc;
+        }
+        .bitcoin {
+            width: 100px;
+            height: 100px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg') no-repeat center;
+            background-size: contain;
+            animation: spin 5s linear infinite;
+            margin: 20px auto;
+        }
+        .survey-btn {
+            display: inline-block;
+            background-color: #f0b90b;
+            color: #1a1a1a;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .survey-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(240, 185, 11, 0.8);
+        }
+        .info {
+            max-width: 600px;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .info h2 {
+            color: #f0b90b;
+        }
+        .reviews {
+            max-width: 800px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .reviews h2 {
+            color: #f0b90b;
+            text-align: center;
+        }
+        .review {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .review img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+        .review-content {
+            flex: 1;
+        }
+        .review-content p {
+            margin: 5px 0;
+        }
+        .review-content .country {
+            font-style: italic;
+            color: #ccc;
+        }
+        .screenshots {
+            max-width: 800px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .screenshots h2 {
+            color: #f0b90b;
+        }
+        .screenshot-gallery {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .screenshot {
+            width: 300px;
+            height: 225px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .screenshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(240, 185, 11, 0.8); }
+            50% { text-shadow: 0 0 20px rgba(240, 185, 11, 1); }
+            100% { text-shadow: 0 0 10px rgba(240, 185, 11, 0.8); }
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <h1>Earn 1 BTC in 10 Minutes!</h1>
+        <p>Complete a simple survey and start mining crypto rewards instantly.</p>
+        <div class="bitcoin"></div>
+    </div>
+    <a href="https://serenitymareaffection.com/tgnqhatjpu?key=09c7ae1be768f217241fd95fb5183487" class="survey-btn" onclick="alert('Redirecting to survey...')">Start Survey Now</a>
+    <div class="info">
+        <h2>How Survey Mining Works</h2>
+        <p>Our innovative platform allows you to earn cryptocurrency by participating in quick surveys. Here's how it works:</p>
+        <ol>
+            <li><strong>Complete the Survey:</strong> Answer a few simple questions in our 10-minute survey.</li>
+            <li><strong>Earn Rewards:</strong> Your responses contribute to our crypto mining pool, earning you 1 BTC.</li>
+            <li><strong>Instant Payout:</strong> Rewards are credited to your wallet instantly after survey completion.</li>
+        </ol>
+        <p>Join thousands of users who are earning crypto effortlessly!</p>
+    </div>
+    <div class="reviews">
+        <h2>What Our Users Say</h2>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Maria S.">
+            <div class="review-content">
+                <p>"This platform is amazing! I completed a quick survey and received my BTC instantly. Highly recommend!"</p>
+                <p><strong>- Maria S.</strong> <span class="country">(Brazil)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Liam T.">
+            <div class="review-content">
+                <p>"Super easy to use, and the payout was in my wallet right after the survey. Love it!"</p>
+                <p><strong>- Liam T.</strong> <span class="country">(United Kingdom)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/women/67.jpg" alt="Aisha K.">
+            <div class="review-content">
+                <p>"I was skeptical at first, but earning 1 BTC in just 10 minutes is real. Great experience!"</p>
+                <p><strong>- Aisha K.</strong> <span class="country">(Nigeria)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/men/19.jpg" alt="Hiroshi Y.">
+            <div class="review-content">
+                <p>"The survey was straightforward, and the crypto reward was credited instantly. Fantastic platform!"</p>
+                <p><strong>- Hiroshi Y.</strong> <span class="country">(Japan)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Emma W.">
+            <div class="review-content">
+                <p>"Earning BTC has never been this easy. The process is smooth, and the payout is fast!"</p>
+                <p><strong>- Emma W.</strong> <span class="country">(Australia)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/men/76.jpg" alt="Rajesh P.">
+            <div class="review-content">
+                <p>"I love how quick and transparent the process is. Got my BTC in minutes!"</p>
+                <p><strong>- Rajesh P.</strong> <span class="country">(India)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/women/53.jpg" alt="Sophie L.">
+            <div class="review-content">
+                <p>"This is a game-changer for earning crypto. Simple surveys, instant rewards!"</p>
+                <p><strong>- Sophie L.</strong> <span class="country">(France)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/men/44.jpg" alt="Carlos M.">
+            <div class="review-content">
+                <p>"Completed a survey during my break and earned BTC. Highly reliable platform!"</p>
+                <p><strong>- Carlos M.</strong> <span class="country">(Mexico)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/women/72.jpg" alt="Fatima A.">
+            <div class="review-content">
+                <p>"The best survey platform I’ve used. Fast payouts and easy to navigate!"</p>
+                <p><strong>- Fatima A.</strong> <span class="country">(Egypt)</span></p>
+            </div>
+        </div>
+        <div class="review">
+            <img src="https://randomuser.me/api/portraits/women/39.jpg" alt="Elena R.">
+            <div class="review-content">
+                <p>"Incredible experience! The survey was quick, and my BTC was in my wallet instantly."</p>
+                <p><strong>- Elena R.</strong> <span class="country">(Russia)</span></p>
+            </div>
+        </div>
+    </div>
+    <div class="screenshots">
+        <h2>Recent Payout Screenshot</h2>
+        <div class="screenshot-gallery">
+            <div class="screenshot">
+                <img id="random-screenshot" src="https://via.placeholder.com/300x225?text=Payout+Screenshot+1" alt="Random Payout Screenshot">
+            </div>
+        </div>
+    </div>
+    <script>
+        const screenshots = [
+            { src: 'https://via.placeholder.com/300x225?text=Payout+Screenshot+1', alt: 'Payout Screenshot 1' },
+            { src: 'https://via.placeholder.com/300x225?text=Payout+Screenshot+2', alt: 'Payout Screenshot 2' },
+            { src: 'https://via.placeholder.com/300x225?text=Payout+Screenshot+3', alt: 'Payout Screenshot 3' }
+        ];
+        const randomIndex = Math.floor(Math.random() * screenshots.length);
+        const screenshotElement = document.getElementById('random-screenshot');
+        screenshotElement.src = screenshots[randomIndex].src;
+        screenshotElement.alt = screenshots[randomIndex].alt;
+    </script>
+</body>
+</html>
